@@ -26,6 +26,11 @@
 	} else {
 	    $anu_color = '';
 	}
+	if (isset($_GET['anu_ubicacio_robatori'])) {
+		$anu_ubicacio_robatori = $_GET['anu_ubicacio_robatori'];
+	} else {
+		$anu_ubicacio_robatori = '';
+	}
 
 	try{
 		$conexion = new PDO('mysql:host=localhost;dbname=bd_kingbarcelona','root','');
@@ -58,8 +63,15 @@
 			$variables .= 'anu_color = ? ';
 			$parametres[]=$anu_color;
 		}
+		if ($anu_ubicacio_robatori != "") {
+			if ($variables != "") {
+				$variables .= 'OR '; //$variables .= '||';
+			}
+			$variables .= 'anu_ubicacio_robatori = ? ';
+			$parametres[]=$anu_ubicacio_robatori;
+		}
 		$select .= $variables;
-		echo $select . "<br/>";
+		echo $select . "<br/> &num;";
 		//echo $parametres[0] . "---" . $parametres[1] . "<br/>";
 
 		//*-------------------metodo 1----------------------*//

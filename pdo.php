@@ -18,7 +18,7 @@
 		} else {
 		    $anu_numero_serie = '';
 
-		} echo "<br>nada num serie: " . $nada;
+		} 
 		if(isset($_GET['anu_marca'])) {
 		    $anu_marca = $_GET['anu_marca'];
 		    if ($anu_marca != "") {
@@ -26,7 +26,7 @@
 		    }
 		} else {
 		    $anu_marca = '';
-		}echo "<br>nada marca: " . $nada;
+		}
 		if(isset($_GET['anu_modelo'])) {
 		    $anu_modelo = $_GET['anu_modelo'];
 		    if ($anu_modelo != "") {
@@ -34,39 +34,48 @@
 		    }
 		} else {
 		    $anu_modelo = '';
-		}echo "<br>nada modelo: " . $nada;
+		}
 		if(isset($_GET['anu_color'])) {
 		    $anu_color = $_GET['anu_color'];
+		    $vueltaColor = $anu_color;
 		    if ($anu_color == 0) {
-		    	// $anu_color = "";
-		    	// $nada2 = 1;
+		    	$anu_color = "no sirve";
 		    }else{$nada = 0;}
 		    // $nada = 0;
 		} else {
 		    $anu_color = '';
-		}echo "<br>nada color: " . $nada;
+		}
 		if (isset($_GET['anu_ubicacio_robatori'])) {
 			$anu_ubicacio_robatori = $_GET['anu_ubicacio_robatori'];
+				$vuelta = $anu_ubicacio_robatori;		
 			if ($anu_ubicacio_robatori == 0) {
-		    	// $anu_ubicacio_robatori = "";
-		    	// $nada2 = 1;
-		    }else{$nada = 0; echo "pasa por aqui";}
+				$anu_ubicacio_robatori = "no sirve";
+				
+		    }else{$nada = 0; }
 		} else {
 			$anu_ubicacio_robatori = '';
-		}echo "<br>nada ubicacio: " . $nada . "<br>";
-
-		echo "<br> ubicacio" . $anu_ubicacio_robatori . "<br>";
+		}
 
 
+		if ($anu_color === "no sirve") {
+			$anu_color = $vueltaColor;
+		}else{$anu_color = "";}
+
+		if ($_GET['anu_ubicacio_robatori'] == '0') { 
+			$anu_ubicacio_robatori = "";
+		}else{
+			$anu_ubicacio_robatori = $vuelta;
+		}
+		
 
 
 		$conexion = new PDO('mysql:host=localhost;dbname=bd_kingbarcelona','root','');
 
-		echo "conexion realizada <br> nada:" . $nada;
+		
 
-		if ($nada == 1) {
-			$select = 'SELECT * FROM anunci';
-		}else {
+		// if ($nada == 1) {
+		// 	$select = 'SELECT * FROM anunci';
+		// }else {
 			$select = 'SELECT * FROM anunci WHERE ';
 			$variables = "";
 			$parametres = array();
@@ -95,7 +104,7 @@
 				$variables .= 'anu_color = ? ';
 				$parametres[]=$anu_color;
 			}
-			echo "variables: " . $variables . "<br/> Color: " . $anu_color;
+			
 			if ($anu_ubicacio_robatori != "") {
 				if ($variables != "") {
 					$variables .= 'OR '; //$variables .= '||';
@@ -104,8 +113,8 @@
 				$parametres[]=$anu_ubicacio_robatori;
 			}
 			$select .= $variables;
-			echo $select . "<br/> &num;";
-		}
+		
+		//}
 		//echo $parametres[0] . "---" . $parametres[1] . "<br/>";
 
 		//*-------------------metodo 1----------------------*//
@@ -118,12 +127,18 @@
 
 
 		//*-------------------metodo 2----------------------*//
-
-		
-			$statement = $conexion->prepare($select);
-			if ($nada = 1) {
-			$statement->execute();
-			}else{$statement->execute($parametres);}
+			if ($anu_ubicacio_robatori === "") {
+				$anu_ubicacio_robatori = 0;
+			}
+			
+			if ($anu_numero_serie == "" AND $anu_marca == "" AND $anu_modelo == "" AND $anu_color == '0' AND $anu_ubicacio_robatori == '0') {
+				$select = 'SELECT * FROM anunci';
+				$statement = $conexion->prepare($select);
+				$statement->execute();
+			}else{
+				$statement = $conexion->prepare($select);
+				$statement->execute($parametres);
+			}
 
 			$resultados = $statement->fetchAll();
 			foreach ($resultados as $bici) {
